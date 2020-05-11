@@ -55,7 +55,7 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :invitable, :database_authenticatable, :registerable, :uid,
          :recoverable, :rememberable, :trackable, :validatable, :omniauthable,
-         omniauth_providers: %i[google_oauth2 github]
+         omniauth_providers: %i[google_oauth2 github facebook]
 
   mount_uploader :avatar, AvatarUploader
 
@@ -90,9 +90,10 @@ class User < ApplicationRecord
     super && !banned
   end
 
-  # TODO: to refactor and to move to builder pattern
-  # UserBuilder::GoogleOauth2
-  def self.find_for_google_oauth2(auth)
+   #TODO: to refactor and to move to builder pattern
+   #UserBuilder::GoogleOauth2
+  #def self.find_for_google_oauth2(auth)
+  def self.find_for_oauth(auth)
     user = find_or_initialize_by(email: auth.info.email)
     user.name ||= auth.info.name
     user.password ||= Devise.friendly_token[0, 20]
@@ -108,12 +109,11 @@ class User < ApplicationRecord
     end
   end
 
-  def google_access_token
-    google_access_token_expired? ? update_access_token : token
+  def access_token
+    access_token_expired? ? update_access_token : token
   end
 
-  # TODO: refactor this and use one checker
-  def google_oauth2_enabled?
+  def oauth_enabled?
     token.present?
   end
 
@@ -154,12 +154,18 @@ class User < ApplicationRecord
 
   private
 
-  # checks if user is created from oauth
+#<<<<<<< HEAD
+  ## checks if user is created from oauth
+#=======
+#>>>>>>> upstream/master
   def oauth_provided?
     provider.present? || token.present?
   end
 
-  def google_access_token_expired?
+#<<<<<<< HEAD
+  #def google_access_token_expired?
+#=======
+  def access_token_expired?
     !access_expires_at || Time.zone.now > access_expires_at
   end
 end

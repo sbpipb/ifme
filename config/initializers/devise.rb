@@ -319,4 +319,20 @@ Devise.setup do |config|
   )
 
   config.omniauth :github, ENV['GITHUB_CLIENT_ID'],  ENV['GITHUB_CLIENT_SECRET'], scope: 'user:email'
+
+  require 'omniauth-facebook'
+
+  config.omniauth(
+    :facebook,
+    ENV['FACEBOOK_APP_ID'],
+    ENV['FACEBOOK_APP_SECRET'],
+    scope: 'public_profile,email',
+    info_fields: 'email,first_name,last_name',
+    client_options: {
+    site: 'https://graph.facebook.com/v2.11',
+    authorize_url: "https://www.facebook.com/v2.11/dialog/oauth"
+  },
+  token_params: { parse: :json },
+  strategy_class: OmniAuth::Strategies::Facebook
+  )
 end
